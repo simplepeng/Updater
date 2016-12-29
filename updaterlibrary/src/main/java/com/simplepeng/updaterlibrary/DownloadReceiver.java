@@ -9,6 +9,8 @@ import android.os.Bundle;
 
 /**
  * Created by simple on 16/12/20.
+ *
+ * 下载监听
  */
 
 public class DownloadReceiver extends BroadcastReceiver {
@@ -20,7 +22,7 @@ public class DownloadReceiver extends BroadcastReceiver {
         DownloadManager downloadManager = (DownloadManager) context
                 .getSystemService(Context.DOWNLOAD_SERVICE);
         Uri fileUri = downloadManager.getUriForDownloadedFile(downId);
-        if (intent.getAction() == DownloadManager.ACTION_DOWNLOAD_COMPLETE) {
+        if (intent.getAction().equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
             installApk(context, fileUri);
         } else if (intent.getAction().equals(DownloadManager.ACTION_NOTIFICATION_CLICKED)) {
             installApk(context, fileUri);

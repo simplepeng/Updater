@@ -1,40 +1,66 @@
 package com.simplepeng.updater;
 
-import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import com.simplepeng.updaterlibrary.LogUtils;
 import com.simplepeng.updaterlibrary.ProgressListener;
 import com.simplepeng.updaterlibrary.Updater;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String url = "http://img.yqsapp.com/upload/1/appdownload/2016/11/MoneyTree5.2.1.apk";
+    private final String pokemon_go_download_url = "https://dl.winudf.com/c/APK/3281/03992c2739ba4" +
+            "c36.apk?_fn=QVBLUHVyZV92MS4yLjVfYXBrcHVyZS5jb20uYXBr&_p=Y29tLmFwa3B1cmUuYWVnb24%3D&as" +
+            "=ba330e2a94a1f30a10b70b5058dc68075864c997&c" +
+            "=1%7CTOOLS&k=6295a35413ef815b3e486f61080cd30a5866f87b";
+
+    private Updater updater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        final TextView tv_total = (TextView) findViewById(R.id.tv_total);
+        final TextView tv_current = (TextView) findViewById(R.id.tv_current);
         findViewById(R.id.btn_update).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Updater updater = new Updater.Builder(MainActivity.this)
-                        .setDownloadUrl(url)
+
+                updater = new Updater.Builder(getApplicationContext())
+                        .setDownloadUrl(pokemon_go_download_url)
                         .setApkName("test.apk")
-                        .setAppName("updater")
-                        .setApkPath(Environment.getExternalStorageDirectory().getAbsolutePath())
+                        .setNotificationTitle("updater")
                         .start();
+
+                updater.registerDownloadReceiver();
 
                 updater.addProgressListener(new ProgressListener() {
                     @Override
-                    public void onProgressChange(int maxBytes, int curBytes, int progress) {
-                        progressBar.setProgress((int) progress);
+                    public void onProgressChange(long totalBytes, long curBytes, int progress) {
+                        progressBar.setProgress(progress);
+                        tv_total.setText("totalBytes-->>" + totalBytes);
+                        tv_current.setText("curBytes-->>" + curBytes);
                     }
                 });
+
+
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        updater.unRegisterDownloadReceiver();
+        LogUtils.debug("onDestroy");
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }

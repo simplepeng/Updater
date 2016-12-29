@@ -5,5 +5,5 @@ package com.simplepeng.updaterlibrary;
  */
 
 public interface ProgressListener {
-    void onProgressChange(int maxBytes, int curBytes, int progress);
+    void onProgressChange(long totalBytes, long curBytes, int progress);
 }

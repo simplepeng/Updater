@@ -9,6 +9,8 @@ import android.os.Message;
 
 /**
  * Created by simple on 16/12/19.
+ *
+ * 下载进度的监听
  */
 
 public class DownloadObserver extends ContentObserver {
@@ -20,6 +22,10 @@ public class DownloadObserver extends ContentObserver {
     private Message message;
     private DownloadManager.Query query;
     private Cursor cursor;
+
+    public static final String CURBYTES = "curBytes";
+    public static final String TOTALBYTES = "totalBytes";
+    public static final String PROGRESS = "progress";
 
     /**
      * Creates a content observer.
@@ -37,29 +43,27 @@ public class DownloadObserver extends ContentObserver {
     @Override
     public void onChange(boolean selfChange) {
         super.onChange(selfChange);
-        cursor = mDownloadManager.query(query);
-        if (cursor == null) {
-            return;
-        }
-
-        if (!cursor.moveToFirst()) {
-            LogUtils.debug("cursor.close();");
+        try {
+            cursor = mDownloadManager.query(query);
+            cursor.moveToFirst();
+            long curBytes = cursor
+                    .getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+            long totalBytes = cursor
+                    .getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+            int mProgress = (int) ((curBytes * 100) / totalBytes);
+            LogUtils.debug("curBytes==" + curBytes);
+            LogUtils.debug("totalBytes==" + totalBytes);
+            LogUtils.debug("mProgress------->" + mProgress);
+            message = mHandler.obtainMessage();
+            bundle.putLong(CURBYTES, curBytes);
+            bundle.putLong(TOTALBYTES, totalBytes);
+            bundle.putInt(PROGRESS, mProgress);
+            message.setData(bundle);
+            mHandler.sendMessage(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
             cursor.close();
         }
-//        while (cursor != null && cursor.moveToFirst()) {
-        long curBytes = cursor
-                .getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
-        long totalBytes = cursor
-                .getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
-        int mProgress = (int) ((curBytes * 100) / totalBytes);
-        LogUtils.debug("curBytes==" + curBytes);
-        LogUtils.debug("totalBytes==" + totalBytes);
-        LogUtils.debug("mProgress------->" + mProgress);
-        message = mHandler.obtainMessage();
-        bundle.putInt("progress",mProgress);
-        message.setData(bundle);
-        mHandler.sendMessage(message);
-//        }
-//        cursor.close();
     }
 }

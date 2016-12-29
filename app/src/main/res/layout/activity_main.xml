@@ -24,4 +24,21 @@
         android:layout_marginTop="20dp"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         />
+
+    <TextView
+        android:id="@+id/tv_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/progressBar"
+        android:textColor="?attr/colorAccent"
+        />
+
+    <TextView
+        android:id="@+id/tv_current"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_total"
+        android:layout_marginTop="20dp"
+        android:textColor="?attr/colorAccent"
+        />
 </RelativeLayout>
