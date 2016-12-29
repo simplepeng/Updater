@@ -163,7 +163,7 @@ public class Updater {
         }
 
         /**
-         * 设置下载下来的文件名
+         * 设置下载下来的apk文件名
          *
          * @param apkName apk文件的名字
          * @return
@@ -207,7 +207,7 @@ public class Updater {
         }
 
         /**
-         * 设置文件名，也就是通知栏显示的名字
+         * 通知栏显示的标题
          *
          * @param title 标题
          * @return
@@ -228,7 +228,7 @@ public class Updater {
         }
 
         /**
-         * 是否为debug模式，会输出很多log信息
+         * 是否为debug模式，会输出很多log信息（手动斜眼）
          *
          * @return
          */

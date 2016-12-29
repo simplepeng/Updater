@@ -12,7 +12,7 @@ import com.simplepeng.updaterlibrary.Updater;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String pokemon_go_download_url = "https://dl.winudf.com/c/APK/3281/03992c2739ba4" +
+    private final String url = "https://dl.winudf.com/c/APK/3281/03992c2739ba4" +
             "c36.apk?_fn=QVBLUHVyZV92MS4yLjVfYXBrcHVyZS5jb20uYXBr&_p=Y29tLmFwa3B1cmUuYWVnb24%3D&as" +
             "=ba330e2a94a1f30a10b70b5058dc68075864c997&c" +
             "=1%7CTOOLS&k=6295a35413ef815b3e486f61080cd30a5866f87b";
@@ -31,8 +31,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 updater = new Updater.Builder(getApplicationContext())
-                        .setDownloadUrl(pokemon_go_download_url)
+                        .setDownloadUrl(url)
                         .setApkName("test.apk")
+//                        .setApkDir("test")
+//                        .setApkPath(Environment.getExternalStorageDirectory().getAbsolutePath())
                         .setNotificationTitle("updater")
                         .start();
 
