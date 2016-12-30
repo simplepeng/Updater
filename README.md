@@ -36,7 +36,7 @@ updater = new Updater.Builder(getApplicationContext())
 
 示例：setApkPath(Environment.getExternalStorageDirectory().getAbsolutePath())
 
-### 监听下载完成安装apk
+### 注册监听下载完成的广播，会自动安装apk（非静默）
 
 * 推荐在manifest中静态注册
 
@@ -60,19 +60,6 @@ updater.registerDownloadReceiver();
  updater.unRegisterDownloadReceiver();
 ```
 
-### 监听下载进度
-
-一般也不需要，看自己业务需求，notification上已经有进度显示了
-
-```java
-updater.addProgressListener(new ProgressListener() {
-         @Override
-          public void onProgressChange(long totalBytes, long curBytes, int progress) {
-                        
-                    }
-                });
-```
-
 ### 需要的权限
 
 ```xml
@@ -81,6 +68,19 @@ updater.addProgressListener(new ProgressListener() {
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <!--调用hideNotification不显示notification需要的权限-->
 <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+```
+
+### 监听下载进度
+
+一般不需要，看自己业务需求，notification上已经有进度显示了
+
+```java
+updater.addProgressListener(new ProgressListener() {
+         @Override
+          public void onProgressChange(long totalBytes, long curBytes, int progress) {
+                        
+                    }
+                });
 ```
 
 ### 方法概括
