@@ -11,7 +11,7 @@
 notification会自己找该应用的icon，也就是说还是会变成你应用的icon的。
 ## 添加依赖
 
-> compile 'simplepeng:updaterlibrary:1.0.0'
+> compile 'com.simplepeng:updaterlibrary:1.0.0'
 
 ## 使用
 
@@ -19,10 +19,10 @@ notification会自己找该应用的icon，也就是说还是会变成你应用�
 
 ```java
 updater = new Updater.Builder(getApplicationContext())
-                        .setDownloadUrl(url)
-                        .setApkName("test.apk")
-                        .setNotificationTitle("updater")
-                        .start();
+                     .setDownloadUrl(url)
+                     .setApkName("test.apk")
+                     .setNotificationTitle("updater")
+                     .start();
 ```
 
 默认下载路径在sd的Download目录，如果想自定义目录，可以调用
@@ -41,9 +41,9 @@ updater = new Updater.Builder(getApplicationContext())
 
 ```xml
 <receiver android:name="com.simplepeng.updaterlibrary.DownloadReceiver">
-            <intent-filter >
-                <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
-            </intent-filter>
+     <intent-filter >
+          <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
+     </intent-filter>
 </receiver>
 ```
 
@@ -102,3 +102,25 @@ Updater中的方法
 * unRegisterDownloadReceiver() 解绑下载完成的监听
 * addProgressListener(ProgressListener progressListener) 添加下载进度回调
 * removeProgressListener(ProgressListener progressListener) 移除下载进度回调
+
+## 关于
+
+* 邮箱 ：simple19930611@gmail.com
+* QQ : 383559698
+* QQ群 ：Android进阶开发 274306954
+
+## License
+
+Copyright 2016 simple peng
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. 
