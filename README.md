@@ -25,7 +25,8 @@ updater = new Updater.Builder(getApplicationContext())
                      .start();
 ```
 
-默认下载路径在sd的Download目录，如果想自定义目录，可以调用
+默认下载路径在sd的Download目录(推荐做法)。<p>
+如果想自定义目录（默认是sd下的目录），可以调用
 > setApkDir(String dirName)
 
 示例：setApkDir("test")
@@ -65,8 +66,8 @@ updater.registerDownloadReceiver();
 
 ```java
 updater.addProgressListener(new ProgressListener() {
-                    @Override
-                    public void onProgressChange(long totalBytes, long curBytes, int progress) {
+         @Override
+          public void onProgressChange(long totalBytes, long curBytes, int progress) {
                         
                     }
                 });
