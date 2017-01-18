@@ -11,7 +11,7 @@
 notification会自己找该应用的icon，也就是说还是会变成你应用的icon的。
 ## 添加依赖
 
-> compile 'com.simplepeng:updaterlibrary:1.0.0'
+> compile 'com.simplepeng:updaterlibrary:1.0.1'
 
 ## 使用
 
@@ -70,6 +70,50 @@ updater.registerDownloadReceiver();
 <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
 ```
 
+### 支持6.0动态权限
+
+在相应的activity中实现回调
+
+```java
+public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks{
+
+    /**
+     * 请求权限回调
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (updater != null) {
+            updater.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+        }
+    }
+
+    /**
+     * 请求权限通过
+     */
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        LogUtils.debug("onPermissionsGranted");
+        if (updater != null) {
+            updater.onPermissionsGranted(requestCode,perms);
+        }
+    }
+
+    /**
+     * 请求权限拒绝
+     */
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        LogUtils.debug("onPermissionsDenied");
+        if (updater != null) {
+            updater.onPermissionsDenied(requestCode,perms);
+        }
+    }
+
+}
+```
+
 ### 监听下载进度
 
 一般不需要，看自己业务需求，notification上已经有进度显示了
@@ -109,6 +153,11 @@ Updater中的方法
 * 邮箱 ：simple19930611@gmail.com
 * QQ : 383559698
 * QQ群 ：Android进阶开发 274306954
+
+## 版本信息
+
+* 1.0.0 初版
+* 1.0.1 增加6.0动态权限支持，7.0文件访问权限支持
 
 ## License
 

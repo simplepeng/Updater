@@ -2,6 +2,7 @@ package com.simplepeng.updaterlibrary;
 
 /**
  * Created by simple on 16/12/19.
+ * 下载进度监听接口
  */
 
 public interface ProgressListener {

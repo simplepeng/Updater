@@ -25,11 +25,13 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:support-core-utils:24.2.1'
+    compile 'pub.devrel:easypermissions:0.2.1'
 }
 
 // 这个version是区分library版本的，因此当我们需要更新library时记得修改这个version
 // 这个version影响后面的引用
-version = "1.0.0"
+version = "1.0.1"
 
 def siteUrl = 'https://github.com/simplepeng/Updater'   // 项目的主页
 def gitUrl = 'https://github.com/simplepeng/Updater.git'   // Git仓库的url

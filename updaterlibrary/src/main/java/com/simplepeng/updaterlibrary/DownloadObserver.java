@@ -9,7 +9,7 @@ import android.os.Message;
 
 /**
  * Created by simple on 16/12/19.
- *
+ * <p>
  * 下载进度的监听
  */
 
@@ -45,25 +45,32 @@ public class DownloadObserver extends ContentObserver {
         super.onChange(selfChange);
         try {
             cursor = mDownloadManager.query(query);
+            if (cursor == null) {
+                return;
+            }
             cursor.moveToFirst();
             long curBytes = cursor
                     .getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
             long totalBytes = cursor
                     .getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
             int mProgress = (int) ((curBytes * 100) / totalBytes);
-            LogUtils.debug("curBytes==" + curBytes);
-            LogUtils.debug("totalBytes==" + totalBytes);
-            LogUtils.debug("mProgress------->" + mProgress);
-            message = mHandler.obtainMessage();
-            bundle.putLong(CURBYTES, curBytes);
-            bundle.putLong(TOTALBYTES, totalBytes);
-            bundle.putInt(PROGRESS, mProgress);
-            message.setData(bundle);
-            mHandler.sendMessage(message);
+            if (totalBytes != 0) {
+                LogUtils.debug("curBytes==" + curBytes);
+                LogUtils.debug("totalBytes==" + totalBytes);
+                LogUtils.debug("mProgress------->" + mProgress);
+                message = mHandler.obtainMessage();
+                bundle.putLong(CURBYTES, curBytes);
+                bundle.putLong(TOTALBYTES, totalBytes);
+                bundle.putInt(PROGRESS, mProgress);
+                message.setData(bundle);
+                mHandler.sendMessage(message);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
     }
 }

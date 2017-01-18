@@ -1,5 +1,7 @@
 package com.simplepeng.updaterlibrary;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -12,10 +14,13 @@ import android.text.TextUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 /**
  * Created by simple on 16/12/19.
- *
+ * <p>
  * Updater
  */
 
@@ -26,7 +31,7 @@ public class Updater {
     private String apkDirName;
     private String title;
     private String downloadUrl;
-    private Context context;
+    private Activity context;
     private DownloadManager downloadManager;
     private long mTaskId;
     private boolean hideNotification = false;
@@ -35,8 +40,13 @@ public class Updater {
     private DownloadReceiver downloadReceiver;
     private DownloadObserver downloadObserver;
     private boolean claerCache = false;
+    //动态权限需要的
+    private String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE};
+    private static final int RC_SDCARD = 123;
 
-    private Updater(Context context) {
+
+    private Updater(Activity context) {
         this.context = context;
     }
 
@@ -47,7 +57,15 @@ public class Updater {
         if (TextUtils.isEmpty(downloadUrl)) {
             throw new NullPointerException("downloadUrl must not be null");
         }
-        downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+
+        if (!EasyPermissions.hasPermissions(context, perms)) {
+            EasyPermissions.requestPermissions(context, "updater 需要sd卡权限",
+                    RC_SDCARD, perms);
+            return;
+        }
+        if (downloadManager == null) {
+            downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        }
 
         //获取一个下载请求
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(downloadUrl));
@@ -65,7 +83,6 @@ public class Updater {
         //设置隐藏通知栏下载
         request.setNotificationVisibility(hideNotification ? DownloadManager.Request.VISIBILITY_HIDDEN
                 : DownloadManager.Request.VISIBILITY_VISIBLE);
-
 
 
         //设置下载路径
@@ -117,7 +134,7 @@ public class Updater {
         if (!listeners.contains(progressListener)) {
             listeners.add(progressListener);
         }
-        if (downloadObserver == null) {
+        if (downloadObserver == null && handler != null && downloadManager != null) {
             downloadObserver = new DownloadObserver(handler, downloadManager, mTaskId);
             context.getContentResolver().registerContentObserver(Uri.parse("content://downloads/"),
                     true, downloadObserver);
@@ -136,6 +153,44 @@ public class Updater {
             if (listeners.isEmpty() && downloadObserver != null)
                 context.getContentResolver().unregisterContentObserver(downloadObserver);
         }
+    }
+
+    /**
+     * 请求权限回调
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     * @param receivers
+     */
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults, Object... receivers) {
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, receivers);
+    }
+
+    /**
+     * 请求权限通过
+     *
+     * @param requestCode
+     * @param perms
+     */
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        download();
+        if (listeners != null && !listeners.isEmpty()) {
+            for (ProgressListener listener : listeners) {
+                addProgressListener(listener);
+            }
+        }
+    }
+
+    /**
+     * 请求权限拒绝
+     *
+     * @param requestCode
+     * @param perms
+     */
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        download();
     }
 
     private Handler handler = new Handler(new Handler.Callback() {
@@ -158,7 +213,7 @@ public class Updater {
 
         private Updater mUpdater;
 
-        public Builder(Context context) {
+        public Builder(Activity context) {
             mUpdater = new Updater(context);
         }
 
@@ -248,7 +303,7 @@ public class Updater {
         }
 
 
-        public Builder clearCache(){
+        public Builder clearCache() {
             mUpdater.claerCache = true;
             return this;
         }

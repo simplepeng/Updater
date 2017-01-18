@@ -1,6 +1,7 @@
 package com.simplepeng.updater;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -10,12 +11,16 @@ import com.simplepeng.updaterlibrary.LogUtils;
 import com.simplepeng.updaterlibrary.ProgressListener;
 import com.simplepeng.updaterlibrary.Updater;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.List;
 
-    private final String url = "https://dl.winudf.com/c/APK/3281/03992c2739ba4" +
-            "c36.apk?_fn=QVBLUHVyZV92MS4yLjVfYXBrcHVyZS5jb20uYXBr&_p=Y29tLmFwa3B1cmUuYWVnb24%3D&as" +
-            "=ba330e2a94a1f30a10b70b5058dc68075864c997&c" +
-            "=1%7CTOOLS&k=6295a35413ef815b3e486f61080cd30a5866f87b";
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks{
+
+
+    private final String url = "http://113.200.98.173/imtt.dd.qq.com/16891/B974CB68F01C2BD7007CB" +
+        "0FA14F9BBC7.apk?mkey=587f32ca98f637cf&f=d287&c=0&fsname=com.daimajia.gold_3.9.5_128.ap" +
+        "k&hsr=4d5s&p=.apk";
 
     private Updater updater;
 
@@ -30,26 +35,32 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                updater = new Updater.Builder(getApplicationContext())
-                        .setDownloadUrl(url)
-                        .setApkName("test.apk")
+                startUpdater(progressBar, tv_total, tv_current);
+
+            }
+        });
+    }
+
+    private void startUpdater(final ProgressBar progressBar, final TextView tv_total,
+                              final TextView tv_current) {
+        updater = new Updater.Builder(MainActivity.this)
+                .setDownloadUrl(url)
+                .setApkName("test.apk")
 //                        .setApkDir("test")
 //                        .setApkPath(Environment.getExternalStorageDirectory().getAbsolutePath())
-                        .setNotificationTitle("updater")
-                        .start();
+                .setNotificationTitle("updater")
+//                .hideNotification()
+                .debug()
+                .start();
 
-                updater.registerDownloadReceiver();
+//        updater.registerDownloadReceiver();
 
-                updater.addProgressListener(new ProgressListener() {
-                    @Override
-                    public void onProgressChange(long totalBytes, long curBytes, int progress) {
-                        progressBar.setProgress(progress);
-                        tv_total.setText("totalBytes-->>" + totalBytes);
-                        tv_current.setText("curBytes-->>" + curBytes);
-                    }
-                });
-
-
+        updater.addProgressListener(new ProgressListener() {
+            @Override
+            public void onProgressChange(long totalBytes, long curBytes, int progress) {
+                progressBar.setProgress(progress);
+                tv_total.setText("totalBytes-->>" + totalBytes);
+                tv_current.setText("curBytes-->>" + curBytes);
             }
         });
     }
@@ -59,6 +70,40 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         updater.unRegisterDownloadReceiver();
         LogUtils.debug("onDestroy");
+    }
+
+    /**
+     * 请求权限回调
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (updater != null) {
+            updater.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+        }
+    }
+
+    /**
+     * 请求权限通过
+     */
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        LogUtils.debug("onPermissionsGranted");
+        if (updater != null) {
+            updater.onPermissionsGranted(requestCode,perms);
+        }
+    }
+
+    /**
+     * 请求权限拒绝
+     */
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        LogUtils.debug("onPermissionsDenied");
+        if (updater != null) {
+            updater.onPermissionsDenied(requestCode,perms);
+        }
     }
 
     @Override
