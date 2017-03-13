@@ -11,7 +11,7 @@
 notification会自己找该应用的icon，也就是说还是会变成你应用的icon的。
 ## 添加依赖
 
-> compile 'com.simplepeng:updaterlibrary:1.0.1'
+> compile 'com.simplepeng:updaterlibrary:1.0.2'
 
 ## 使用
 
@@ -190,6 +190,7 @@ Updater中的方法
 
 * 1.0.0 初版
 * 1.0.1 增加6.0动态权限支持，7.0文件访问权限支持
+* 1.0.2 抽出7.0访问权限设置
 
 ## License
 
