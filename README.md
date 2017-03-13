@@ -144,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 </paths>
 ```
 
+<img src="https://raw.githubusercontent.com/simplepeng/Updater/master/image/7.0.png" width = "200" height = "50">
+
 ### 监听下载进度
 
 一般不需要，看自己业务需求，notification上已经有进度显示了
