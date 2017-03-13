@@ -3,7 +3,9 @@ package com.simplepeng.updaterlibrary;
 import android.Manifest;
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -44,6 +47,8 @@ public class Updater {
     private String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE};
     private static final int RC_SDCARD = 123;
+
+    private DownloadFailedReceiver downloadFailedReceiver = new DownloadFailedReceiver();
 
 
     private Updater(Activity context) {
@@ -101,22 +106,11 @@ public class Updater {
         //将下载请求加入下载队列
         //加入下载队列后会给该任务返回一个long型的id，
         //通过该id可以取消任务，重启任务等等
-//        LogUtils.debug("mTaskId === "+mTaskId);
-//        Cursor cursor = downloadManager.query(new DownloadManager.Query().setFilterById(mTaskId));
-//        if (cursor != null && cursor.moveToFirst()) {
-//            int status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
-//            Toast.makeText(context, "" + status, Toast.LENGTH_LONG).show();
-//            LogUtils.debug("status === " + status);
-//            cursor.close();
-//        } else {
-//            LogUtils.debug("cursor === null");
-//        }
-//
-//        if (mTaskId != 0) {
-//            downloadManager.remove(mTaskId);
-//        }
         mTaskId = downloadManager.enqueue(request);
-
+        if (downloadFailedReceiver != null) {
+            context.registerReceiver(downloadFailedReceiver,
+                    new IntentFilter(Updater.DownloadFailedReceiver.tag));
+        }
     }
 
     /**
@@ -208,6 +202,10 @@ public class Updater {
      */
     public void onPermissionsDenied(int requestCode, List<String> perms) {
         download();
+    }
+
+    public static void showToast(Context context,String msg){
+        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
     }
 
     private Handler handler = new Handler(new Handler.Callback() {
@@ -341,6 +339,18 @@ public class Updater {
             return mUpdater;
         }
 
+    }
+
+
+    public class DownloadFailedReceiver extends BroadcastReceiver{
+
+        public static final String tag = "DownloadFailedReceiver";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            LogUtils.debug("开始重新下载");
+            download();
+        }
     }
 
 }

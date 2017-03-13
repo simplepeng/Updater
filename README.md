@@ -114,6 +114,36 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 }
 ```
 
+### 7.0内部文件访问权限
+
+在manifest文件中添加
+
+```
+<provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+```
+
+在res目录下新建名为xml的文件夹，并新建filepaths.xml
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+
+    <!-- <external-path path="sdcard/Download/" name="files_root" />-->
+    <external-path
+        name="external_storage_root"
+        path="." />
+
+</paths>
+```
+
 ### 监听下载进度
 
 一般不需要，看自己业务需求，notification上已经有进度显示了

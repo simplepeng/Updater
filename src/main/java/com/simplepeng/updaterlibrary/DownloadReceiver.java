@@ -37,12 +37,6 @@ public class DownloadReceiver extends BroadcastReceiver {
         query.setFilterById(downloadApkId);
         Cursor c = dManager.query(query);
         if (c != null && c.moveToFirst()) {
-//            int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
-//            if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(columnIndex)) {
-//                String downloadFileUrl = c
-//                        .getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-//                installApk(context, Uri.parse(downloadFileUrl));
-//            }
             int status = c.getInt(c.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
             switch (status) {
                 case DownloadManager.STATUS_PENDING:
@@ -59,9 +53,12 @@ public class DownloadReceiver extends BroadcastReceiver {
                     String downloadFileUrl = c
                             .getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
                     installApk(context, Uri.parse(downloadFileUrl));
+//                    context.unregisterReceiver();
                     break;
                 case DownloadManager.STATUS_FAILED:
                     LogUtils.debug("STATUS_FAILED");
+                    Updater.showToast(context,"下载失败，开始重新下载...");
+                    context.sendBroadcast(new Intent(Updater.DownloadFailedReceiver.tag));
                     break;
             }
             c.close();
