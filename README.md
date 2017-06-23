@@ -183,7 +183,6 @@ Updater中的方法
 ## 关于
 
 * 邮箱 ：simple19930611@gmail.com
-* QQ : 383559698
 * QQ群 ：Android进阶开发 274306954
 
 ## 版本信息
