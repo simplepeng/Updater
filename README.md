@@ -4,8 +4,10 @@
 
 ## 样例
 
-<img src="https://raw.githubusercontent.com/simplepeng/Updater/master/image/updater_1.png" width = "150" height = "250">
-<img src="https://raw.githubusercontent.com/simplepeng/Updater/master/image/updater_2.png" width = "150" height = "250">
+|                                                              |                                                              |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ![](https://raw.githubusercontent.com/simplepeng/Updater/master/image/updater_1.png) | ![](https://raw.githubusercontent.com/simplepeng/Updater/master/image/updater_2.png) |
+
 
 这里notification上的图标是Android小机器人可以不用担心，DownloadManager封装的
 notification会自己找该应用的icon，也就是说还是会变成你应用的icon的。
