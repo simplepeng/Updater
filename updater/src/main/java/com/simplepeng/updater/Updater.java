@@ -12,8 +12,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
+
+import com.yanzhenjie.permission.Action;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Permission;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,19 +59,34 @@ public class Updater {
         this.context = context;
     }
 
+    private void checkPermissions() {
+        AndPermission.with(context)
+                .runtime()
+                .permission(Permission.Group.STORAGE)
+                .onGranted(new Action<List<String>>() {
+                    @Override
+                    public void onAction(List<String> data) {
+                        download();
+                    }
+                })
+                .onDenied(new Action<List<String>>() {
+                    @Override
+                    public void onAction(List<String> data) {
+                        Toast.makeText(context, "取消了授权", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .start();
+    }
+
     private void download() {
         if (context == null) {
             throw new NullPointerException("context must not be null");
         }
+
         if (TextUtils.isEmpty(downloadUrl)) {
             throw new NullPointerException("downloadUrl must not be null");
         }
 
-//        if (!EasyPermissions.hasPermissions(context, perms)) {
-//            EasyPermissions.requestPermissions(context, "updater 需要sd卡权限",
-//                    RC_SDCARD, perms);
-//            return;
-//        }
         if (downloadManager == null) {
             downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         }
@@ -87,6 +107,9 @@ public class Updater {
         //设置隐藏通知栏下载
         request.setNotificationVisibility(hideNotification ? DownloadManager.Request.VISIBILITY_HIDDEN
                 : DownloadManager.Request.VISIBILITY_VISIBLE);
+        if (TextUtils.isEmpty(apkFileName)) {
+            apkFileName = Utils.getFileNameForUrl(downloadUrl);
+        }
 
         if (!apkFileName.endsWith(".apk")) {
             apkFileName += ".apk";
@@ -165,46 +188,9 @@ public class Updater {
         }
     }
 
-    /**
-     * 请求权限回调
-     *
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     * @param receivers
-     */
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults, Object... receivers) {
-//        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, receivers);
-    }
 
-    /**
-     * 请求权限通过
-     *
-     * @param requestCode
-     * @param perms
-     */
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
-        download();
-        if (listeners != null && !listeners.isEmpty()) {
-            for (ProgressListener listener : listeners) {
-                addProgressListener(listener);
-            }
-        }
-    }
-
-    /**
-     * 请求权限拒绝
-     *
-     * @param requestCode
-     * @param perms
-     */
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
-        download();
-    }
-
-    public static void showToast(Context context,String msg){
-        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
+    public static void showToast(Context context, String msg) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 
     private Handler handler = new Handler(new Handler.Callback() {
@@ -334,14 +320,14 @@ public class Updater {
          * @return
          */
         public Updater start() {
-            mUpdater.download();
+            mUpdater.checkPermissions();
             return mUpdater;
         }
 
     }
 
 
-    public class DownloadFailedReceiver extends BroadcastReceiver{
+    public class DownloadFailedReceiver extends BroadcastReceiver {
 
         public static final String tag = "DownloadFailedReceiver";
 
