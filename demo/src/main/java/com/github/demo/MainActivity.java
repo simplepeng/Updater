@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private void updateApk(String url) {
         new Updater.Builder(this)
                 .setDownloadUrl(url)
+                .setApkFileName("Updater")
+                .setNotificationTitle("正在下载最新apk")
                 .debug()
                 .start();
     }

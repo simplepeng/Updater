@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
+import android.text.TextUtils;
 
 import java.io.File;
 
@@ -23,10 +24,11 @@ public class DownloadReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
+        if (bundle == null) return;
         long downId = bundle.getLong(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
         //下载完成或点击通知栏
-        if (intent.getAction().equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE) ||
-                intent.getAction().equals(DownloadManager.ACTION_NOTIFICATION_CLICKED)) {
+        if (TextUtils.equals(intent.getAction(), (DownloadManager.ACTION_DOWNLOAD_COMPLETE)) ||
+                TextUtils.equals(intent.getAction(), (DownloadManager.ACTION_NOTIFICATION_CLICKED))) {
             queryFileUri(context, downId);
         }
     }
@@ -35,6 +37,7 @@ public class DownloadReceiver extends BroadcastReceiver {
         DownloadManager dManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         DownloadManager.Query query = new DownloadManager.Query();
         query.setFilterById(downloadApkId);
+        if (dManager == null)return;
         Cursor c = dManager.query(query);
         if (c != null && c.moveToFirst()) {
             int status = c.getInt(c.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
