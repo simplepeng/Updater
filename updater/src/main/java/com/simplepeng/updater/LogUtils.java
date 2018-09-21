@@ -2,10 +2,6 @@ package com.simplepeng.updater;
 
 import android.util.Log;
 
-/**
- * Created by simple on 16/12/19.
- */
-
 public class LogUtils {
 
     private static final String TAG = "Updater";

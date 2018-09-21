@@ -7,12 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
-/**
- * Created by simple on 16/12/19.
- * <p>
- * 下载进度的监听
- */
-
 public class DownloadObserver extends ContentObserver {
 
     private DownloadManager mDownloadManager;

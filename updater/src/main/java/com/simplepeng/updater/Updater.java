@@ -24,13 +24,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * Created by simple on 16/12/19.
- * <p>
- * Updater
- */
-
 public class Updater {
 
     private String apkFileName;
@@ -47,7 +40,7 @@ public class Updater {
     private DownloadReceiver downloadReceiver;
     private DownloadObserver downloadObserver;
     private boolean claerCache = false;
-    //动态权限需要的
+
     private String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE};
     private static final int RC_SDCARD = 123;
@@ -91,20 +84,15 @@ public class Updater {
             downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         }
 
-        //获取一个下载请求
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(downloadUrl));
 
-        //设置wifi，流量都可以下载
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager
                 .Request.NETWORK_WIFI);
 
-        //漫游网络是否可以下载
         request.setAllowedOverRoaming(allowedOverRoaming);
 
-        //在通知栏中显示标题，默认就是显示的
         request.setTitle(TextUtils.isEmpty(title) ? apkFileName : title);
 
-        //设置隐藏通知栏下载
         request.setNotificationVisibility(hideNotification ? DownloadManager.Request.VISIBILITY_HIDDEN
                 : DownloadManager.Request.VISIBILITY_VISIBLE);
         if (TextUtils.isEmpty(apkFileName)) {

@@ -13,12 +13,6 @@ import android.text.TextUtils;
 
 import java.io.File;
 
-/**
- * Created by simple on 16/12/20.
- * <p>
- * 下载监听
- */
-
 public class DownloadReceiver extends BroadcastReceiver {
 
     @Override
